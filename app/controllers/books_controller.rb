@@ -25,9 +25,9 @@ class BooksController < ApplicationController
   end
 
   def cover
-    book = Book.find(params[:id])
-    if book.cover.attached?
-      redirect_to rails_blob_url(book.cover)
+    @book = Book.find(params[:id])
+    if @book.cover.attached?
+      redirect_to rails_blob_url(@book.cover)
     else
       head :not_found
     end
@@ -39,6 +39,9 @@ class BooksController < ApplicationController
 
     respond_to do |format|
       if @book.save
+        # Anexar a capa do livro ao livro
+        @book.cover.attach(params[:book][:cover])
+        
         format.html { redirect_to book_url(@book), notice: "Book was successfully created." }
         format.json { render :show, status: :created, location: @book }
       else
